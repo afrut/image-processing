@@ -26,12 +26,25 @@ def quantizeDiv(img, div):
 
 # ---------------------------------------------------------------------
 #
+# Quantization function using numpy matrix functions
+#
+# ---------------------------------------------------------------------
+def matQuantize(A,div):
+    ret = np.multiply(A,1/div)
+    ret = np.trunc(ret)
+    ret = np.multiply(ret,div)
+    ret = np.asarray(ret,dtype = np.uint8)
+    return ret
+
+# ---------------------------------------------------------------------
+#
 # MAIN
 #
 # ---------------------------------------------------------------------
 if __name__ == "__main__":
     # load a color image in grayscale
     img = cv2.imread('./test images/peppers_gray.tif', 0)
+    imgCopy = img.copy()
 
     # initialize x and y position of windows
     winPosY = 0         # y-coordinate of next window to plot
@@ -42,8 +55,12 @@ if __name__ == "__main__":
     # for all powers of 2 from 0 to 8
     for pwr in range(0, 8):
 
+        # restore the image
+        img = imgCopy.copy()
+
         # quantize the intensity levels
-        quantizeDiv(img, 2 ** pwr)
+        #quantizeDiv(img, 2 ** pwr)
+        img = matQuantize(img, 2**pwr)
 
         # display an image with another resolution on a resizable window
         winName = '2 ** ' + str(pwr)      # name of the current window
