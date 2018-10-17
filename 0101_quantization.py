@@ -26,18 +26,6 @@ def quantizeDiv(img, div):
 
 # ---------------------------------------------------------------------
 #
-# Quantization function using numpy matrix functions
-#
-# ---------------------------------------------------------------------
-def matQuantize(A,div):
-    ret = np.multiply(A,1/div)
-    ret = np.trunc(ret)
-    ret = np.multiply(ret,div)
-    ret = np.asarray(ret,dtype = np.uint8)
-    return ret
-
-# ---------------------------------------------------------------------
-#
 # MAIN
 #
 # ---------------------------------------------------------------------
