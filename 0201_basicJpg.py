@@ -3,6 +3,7 @@ import subprocess as sp
 import numpy as np
 import cv2
 import math
+import commonFunc as cf
 
 sp.call('cls', shell=True)
 
@@ -131,14 +132,6 @@ def testDct():
 
 # ---------------------------------------------------------------------
 #
-# Quantization functions
-#
-# ---------------------------------------------------------------------
-def basicQuantize(A,div):
-    return np.multiply(np.trunc(np.multiply(A,1/div)),div)
-
-# ---------------------------------------------------------------------
-#
 # jpeg function
 #
 # ---------------------------------------------------------------------
@@ -160,7 +153,7 @@ def jpeg(img, div, display8x8 = False):
             B = cv2.dct(imgSlice.astype('float32'))
 
             # quantize the block of DCT coefficients
-            Bprime = basicQuantize(B,div)
+            Bprime = cf.quantize(B,div)
 
             # calculate the inverse dct
             B = cv2.dct(Bprime.astype('float32'), B, cv2.DCT_INVERSE)
@@ -207,7 +200,6 @@ def jpeg(img, div, display8x8 = False):
 #
 # ---------------------------------------------------------------------
 def showImg(img, winName, winPosX, winPosY):
-    winName = 'div = 2**' + str(pwr)
     cv2.namedWindow(winName, cv2.WINDOW_NORMAL)
     cv2.moveWindow(winName, winPosX, winPosY)
     cv2.imshow(winName, img)
@@ -238,7 +230,6 @@ if __name__ == "__main__":
     # ----------------------------------------
     # jpeg-type compression
     # ----------------------------------------
-    print('Performing jpeg-type compression with DCT and quantization')
     for pwr in range(0,12):
         # divisor for quantization
         div = 2**pwr
@@ -270,8 +261,7 @@ if __name__ == "__main__":
     winHeight = 300     # height of window
 
     sp.call('cls', shell = True)
-    print('Performing quantization without DCT')
-    for pwr in range(0,6):
+    for pwr in range(0,12,2):
         # divisor for quantization
         div = 2**pwr
 
@@ -280,12 +270,11 @@ if __name__ == "__main__":
 
         # perform quantization on the image
         # TODO: get basic quantization to work here
-        retQuant = basicQuantize(img, div)       
+        retQuant = cf.quantize(img, div)       
 
         # display an image with another resolution on a resizable window
         showImg(retJpeg, 'JPEG div = 2**' + str(pwr), winPosX, winPosY)
-        showImg(img, 'QUANT div = 2**' + str(pwr), winPosX, winPosY + winHeight)
-        print(retQuant)
+        showImg(retQuant, 'QUANT div = 2**' + str(pwr), winPosX, winPosY + winHeight + 32)
 
         # start plotting on another row
         if winPosX > 1430:
