@@ -85,7 +85,7 @@ def quantize(A, div, retType = None):
 # pixel with the average
 #
 # ---------------------------------------------------------------------
-def neighborAverage(img,n):
+def average(img,n):
     # copy the image
     imgCopy = np.copy(img)
 
