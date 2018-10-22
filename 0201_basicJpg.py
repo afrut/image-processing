@@ -1,4 +1,3 @@
-#TODO: use opencv libraries
 import subprocess as sp
 import numpy as np
 import cv2
@@ -12,7 +11,7 @@ sp.call('cls', shell=True)
 # jpeg function
 #
 # ---------------------------------------------------------------------
-def jpeg(img, div, display8x8 = False):
+def jpeg(img, div, fft = False, display8x8 = False):
 
     # begin raster scan
     stop = False
@@ -26,15 +25,25 @@ def jpeg(img, div, display8x8 = False):
             imgSlice = img[rowStart:rowStart + matSize
                           ,colStart:colStart + matSize]
 
-            # compute the discrete cosine transform of the block
-            B = cv2.dct(imgSlice.astype('float32'))
+            if(not fft):
+                # compute the discrete cosine transform of the block
+                B = cv2.dct(imgSlice.astype('float32'))
 
-            # quantize the block of DCT coefficients
-            Bprime = cf.quantize(B,div)
+                # quantize the block of DCT coefficients
+                Bprime = cf.quantize(B,div)
 
-            # calculate the inverse dct
-            B = cv2.dct(Bprime.astype('float32'), B, cv2.DCT_INVERSE)
+                # calculate the inverse dct
+                B = cv2.dct(Bprime.astype('float32'), B, cv2.DCT_INVERSE)
+            else:
+                # compute the discrete cosine transform of the block
+                B = np.fft.fft2(imgSlice)
 
+                # quantize the block of DCT coefficients
+                Bprime = cf.quantize(B,div)
+
+                # calculate the inverse dct
+                B = np.fft.ifft2(Bprime)
+                
             # replace the quantized blocks in the image's copy
             imgCopy[rowStart:rowStart + matSize
                    ,colStart:colStart + matSize] = B
@@ -100,11 +109,6 @@ if __name__ == "__main__":
     winHeight = 300     # height of window
 
     # ----------------------------------------
-    # for checking if DCT is computed correctly
-    # ----------------------------------------
-    #testDct()
-
-    # ----------------------------------------
     # jpeg-type compression
     # ----------------------------------------
     for pwr in range(0,12):
@@ -146,12 +150,46 @@ if __name__ == "__main__":
         retJpeg = jpeg(img, div)
 
         # perform quantization on the image
-        # TODO: get basic quantization to work here
         retQuant = cf.quantize(img, div)       
 
         # display an image with another resolution on a resizable window
         showImg(retJpeg, 'JPEG div = 2**' + str(pwr), winPosX, winPosY)
         showImg(retQuant, 'QUANT div = 2**' + str(pwr), winPosX, winPosY + winHeight + 32)
+
+        # start plotting on another row
+        if winPosX > 1430:
+            winPosY = winPosY + winHeight + 32
+            winPosX = 60
+        else:
+            # increment next position of windows
+            winPosX = winPosX + winWidth
+
+    k = cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    # ----------------------------------------
+    # comparison of compression using DCT and FFT
+    # ----------------------------------------
+    # initialize x and y position of windows
+    winPosY = 0         # y-coordinate of next window to plot
+    winPosX = 60        # x-coordinate of next window to plot
+    winWidth = 300      # width of window
+    winHeight = 300     # height of window
+
+    sp.call('cls', shell = True)
+    for pwr in range(0,12,2):
+        # divisor for quantization
+        div = 2**pwr
+
+        # perform jpeg quantization on the image
+        retDct = jpeg(img, div, fft = False)
+
+        # perform quantization on the image
+        retFft = jpeg(img, div, fft = True)
+
+        # display an image with another resolution on a resizable window
+        showImg(retDct, 'DCT div = 2**' + str(pwr), winPosX, winPosY)
+        showImg(retFft, 'FFT div = 2**' + str(pwr), winPosX, winPosY + winHeight + 32)
 
         # start plotting on another row
         if winPosX > 1430:
