@@ -71,6 +71,7 @@ def quantize(A, div, retType = None):
         retType = A.dtype
 
     # divide, truncate, multiply
+    # use numpy function calls for speed
     ret = np.multiply(A,1/div)
     ret = np.trunc(ret)
     ret = np.multiply(ret,div)
@@ -92,8 +93,6 @@ def average(img,n):
     # get dimensions of image
     numRows = img.shape[0]
     numCols = img.shape[1]
-
-    brk = False
 
     # loop through every pixel
     for i in range(0,numRows):
@@ -122,19 +121,16 @@ def average(img,n):
 # ---------------------------------------------------------------------
 def rotate(img, theta, ctr = None):
 
+    # get dimensions of image
+    numRows, numCols = img.shape
+
     # define center around which rotation occurs
     if ctr is None:
-        ctr = ( math.trunc(img.shape[0] / 2) + 1
-              , math.trunc(img.shape[1] / 2) + 1 )
-
-    # get dimensions of image
-    numRows = img.shape[0]
-    numCols = img.shape[1]
+        ctr = (math.trunc(numRows / 2) + 1
+              ,math.trunc(numCols / 2) + 1)
 
     # preallocate the output image
-    imgCopy = np.zeros( [512,512], dtype=np.uint8 )
-
-    brk = False
+    imgCopy = np.zeros([512,512], dtype = np.uint8)
 
     # loop through every pixel in the output image and check if each
     # pixel maps to a pixel in the input image
