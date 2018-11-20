@@ -6,6 +6,7 @@ import math
 import time
 
 import commonFunc as cf
+import classes
 
 # ---------------------------------------------------------------------
 #
@@ -18,7 +19,7 @@ if __name__ == "__main__":
     sp.call('cls', shell=True)
 
     # initialize ImageDisplayManager
-    idm = cf.ImageDisplayManager()
+    idm = classes.ImageDisplayManager()
 
     # load a color image in grayscale
     img = cv2.imread('./test images/peppers_gray.tif', 0)

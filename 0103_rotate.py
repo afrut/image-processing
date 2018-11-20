@@ -3,6 +3,7 @@ import subprocess as sp
 import numpy as np
 import cv2
 import math
+import classes
 
 sp.call('cls', shell=True)
 
@@ -49,45 +50,22 @@ if __name__ == "__main__":
     # load a color image in grayscale
     img = cv2.imread('./test images/peppers_gray.tif', 0)
 
-    # initialize x and y position of windows
-    winPosY = 0         # y-coordinate of next window to plot
-    winPosX = 50        # x-coordinate of next window to plot
-    winWidth = 345      # width of window
-    winHeight = 345     # height of window
+    # image display manager
+    idm = classes.ImageDisplayManager()
+
+    # display original image
+    idm.add(img, 'Original')
 
     # define center around which rotation occurs
     ctr = ( math.trunc(img.shape[0] / 2) + 1
           , math.trunc(img.shape[1] / 2) + 1 )
-
-    # plot the original image
-    winName = 'Original'                # name of the current window
-    cv2.namedWindow(winName, cv2.WINDOW_NORMAL)
-    cv2.moveWindow(winName, winPosX, winPosY)
-    cv2.imshow(winName,img)
-    cv2.resizeWindow(winName, winWidth, winHeight)
-    winPosX = winPosX + winWidth        # increment next position of windows
 
     # for all powers of 2 from 0 to 8
     for n in range(0,9):
         imgCopy = imRotate( img, n * math.pi / 4, ctr)
 
         # display an image with another resolution on a resizable window
-        winName = 'n = ' + str(n) + '* pi'     # name of the current window
-        cv2.namedWindow(winName, cv2.WINDOW_NORMAL)
-        cv2.moveWindow(winName, winPosX, winPosY)
-        cv2.imshow(winName,imgCopy)
-        cv2.resizeWindow(winName, winWidth, winHeight)
+        idm.add(imgCopy, 'n = ' + str(n) + '* pi')
 
-        # increment next position of windows
-        winPosX = winPosX + winWidth
-
-        # start plotting on another row
-        if winPosX > 1430:
-            winPosY = winPosY + winHeight + 32
-            winPosX = 50
-
-    # wait for a keypress from the user
-    k = cv2.waitKey(0)
-
-    # close all windows
-    cv2.destroyAllWindows()
+    # show all images
+    idm.show()

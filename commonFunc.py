@@ -11,55 +11,6 @@ import math
 
 # ---------------------------------------------------------------------
 #
-# A simple class to handle the management of displaying images properly
-# on screen; only designed to have one instance
-#
-# ---------------------------------------------------------------------
-class ImageDisplayManager:
-    images = list()     # list of all images to display
-
-    # ----------------------------------------
-    # to be called by client code to add images to display
-    # ----------------------------------------
-    def add(self, img, title):
-        ImageDisplayManager.images.append((img, title))
-
-    # ----------------------------------------
-    # to be called by client code to add display all images
-    # ----------------------------------------
-    def show(self):
-        # initialize positions
-        x = 60
-        y = 0
-        width = 300
-        height = 300
-
-        # tpl[0] is the image to be displayed
-        # tpl[1] is the title for the image
-        for tpl in ImageDisplayManager.images:
-            img = tpl[0].copy()
-            title = tpl[1]
-
-            # call the appropriate opencv functions to display the images
-            cv2.namedWindow(title, cv2.WINDOW_NORMAL)
-            cv2.moveWindow(title, x, y)
-            cv2.imshow(title, img)
-            cv2.resizeWindow(title, width, height)
-
-            # start plotting on another row
-            if x > 1430:
-                y = y + height + 32
-                x = 60
-            else:
-                # increment next position of windows
-                x = x + width
-
-        # wait for user input then destroy all windows
-        k = cv2.waitKey(0)
-        cv2.destroyAllWindows()
-
-# ---------------------------------------------------------------------
-#
 # Quantize a matrix by passing a divisor in
 # Returns a quantized matrix with the same type as the input matrix
 #
@@ -150,6 +101,9 @@ def rotate(img, theta, ctr = None):
                                , img.item(x,y) )
 
     return imgCopy
+
+
+
 
 
 # ---------------------------------------------------------------------
