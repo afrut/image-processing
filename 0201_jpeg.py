@@ -17,8 +17,9 @@ def jpeg(img, div, fft = False, display8x8 = False):
     # begin scanning
     stop = False
     display = False
-    matSize = 8         # size of matrix blocks to perform dct
+    matSize = 8             # size of matrix blocks to perform dct
     imgCopy = img.copy()
+    idm = classes.ImageDisplayManager()
     for rowStart in range(0,512,matSize):
         for colStart in range(0,512,matSize):
             # take a matSize x matSize block
@@ -52,44 +53,13 @@ def jpeg(img, div, fft = False, display8x8 = False):
             if display8x8:
 
                 # display an image with another resolution on a resizable window
-                winName = 'Original'
-                cv2.namedWindow(winName, cv2.WINDOW_NORMAL)
-                cv2.moveWindow(winName, winPosX, winPosY)
-                cv2.imshow(winName,imgSlice)
-                cv2.resizeWindow(winName, winWidth, winHeight)
-
-                # increment next position of windows
-                #winPosX = winPosX + winWidth
-
-                # start plotting on another row
-                if winPosX > 1430:
-                    winPosY = winPosY + winHeight + 32
-                    winPosX = 50
-
-                # wait for a keypress from the user
-                k = cv2.waitKey(0)
-                if(k == 27):
-                    stop = True
-
-                # check if loop should be stopped
-                if stop:
-                    display8x8 = False
-
-                # close all windows
-                cv2.destroyAllWindows()
+                idm.showImg(imgSlice, '8 x 8')
 
     return imgCopy
 
-# ---------------------------------------------------------------------
-#
-# simple function to show an image at a certain location in the screen
-#
-# ---------------------------------------------------------------------
-def showImg(img, winName, winPosX, winPosY):
-    cv2.namedWindow(winName, cv2.WINDOW_NORMAL)
-    cv2.moveWindow(winName, winPosX, winPosY)
-    cv2.imshow(winName, img)
-    cv2.resizeWindow(winName, winWidth, winHeight)
+
+
+
 
 # ---------------------------------------------------------------------
 #
@@ -111,78 +81,28 @@ if __name__ == "__main__":
         div = 2**pwr
 
         # perform jpeg quantization on the image
-        ret = jpeg(img, div)
+        ret = jpeg(img, div, fft = False, display8x8 = False)
 
         # add each of the figures to be displayed
         idm.add(ret, 'div = 2**' + str(pwr))
     idm.show()
 
-    ## ----------------------------------------
-    ## comparison of quantization only and quantization with DCT
-    ## ----------------------------------------
-    ## initialize x and y position of windows
-    #winPosY = 0         # y-coordinate of next window to plot
-    #winPosX = 60        # x-coordinate of next window to plot
-    #winWidth = 300      # width of window
-    #winHeight = 300     # height of window
+    # ----------------------------------------
+    # comparison of quantization only and quantization with DCT
+    # ----------------------------------------
+    sp.call('cls', shell = True)
+    idm.init()
+    for pwr in range(0,12,2):
+        # divisor for quantization
+        div = 2**pwr
 
-    #sp.call('cls', shell = True)
-    #for pwr in range(0,12,2):
-    #    # divisor for quantization
-    #    div = 2**pwr
+        # perform jpeg quantization on the image
+        retJpeg = jpeg(img, div)
 
-    #    # perform jpeg quantization on the image
-    #    retJpeg = jpeg(img, div)
+        # perform quantization on the image
+        retQuant = cf.quantize(img, div)       
 
-    #    # perform quantization on the image
-    #    retQuant = cf.quantize(img, div)       
-
-    #    # display an image with another resolution on a resizable window
-    #    showImg(retJpeg, 'JPEG div = 2**' + str(pwr), winPosX, winPosY)
-    #    showImg(retQuant, 'QUANT div = 2**' + str(pwr), winPosX, winPosY + winHeight + 32)
-
-    #    # start plotting on another row
-    #    if winPosX > 1430:
-    #        winPosY = winPosY + winHeight + 32
-    #        winPosX = 60
-    #    else:
-    #        # increment next position of windows
-    #        winPosX = winPosX + winWidth
-
-    #k = cv2.waitKey(0)
-    #cv2.destroyAllWindows()
-
-    ## ----------------------------------------
-    ## comparison of compression using DCT and FFT
-    ## ----------------------------------------
-    ## initialize x and y position of windows
-    #winPosY = 0         # y-coordinate of next window to plot
-    #winPosX = 60        # x-coordinate of next window to plot
-    #winWidth = 300      # width of window
-    #winHeight = 300     # height of window
-
-    #sp.call('cls', shell = True)
-    #for pwr in range(0,12,2):
-    #    # divisor for quantization
-    #    div = 2**pwr
-
-    #    # perform jpeg quantization on the image
-    #    retDct = jpeg(img, div, fft = False)
-
-    #    # perform quantization on the image
-    #    #retFft = jpeg(img, div, fft = True)
-
-    #    # display an image with another resolution on a resizable window
-    #    showImg(retDct, 'DCT div = 2**' + str(pwr), winPosX, winPosY)
-    #    #showImg(retFft, 'FFT div = 2**' + str(pwr), winPosX, winPosY + winHeight + 32)
-
-    #    # start plotting on another row
-    #    if winPosX > 1430:
-    #        winPosY = winPosY + winHeight + 32
-    #        winPosX = 60
-    #    else:
-    #        # increment next position of windows
-    #        winPosX = winPosX + winWidth
-
-    #k = cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+        # display an image with another resolution on a resizable window
+        idm.add(retJpeg, 'JPEG div = 2**' + str(pwr))
+        idm.add(retQuant, 'QUANT div = 2**' + str(pwr))
+    idm.show()
