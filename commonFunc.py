@@ -1,3 +1,4 @@
+# exec(open('commonFunc.py').read())
 # ---------------------------------------------------------------------
 #
 # This module contains common functions used in different programs
@@ -8,6 +9,7 @@ import numpy as np
 import time
 import cv2
 import math
+import classes
 
 # ---------------------------------------------------------------------
 #
@@ -117,7 +119,7 @@ if __name__ == "__main__":
     sp.call('cls', shell = True)
 
     # initialize ImageDisplayManager
-    idm = ImageDisplayManager()
+    idm = classes.ImageDisplayManager()
 
     # load a color image in grayscale
     img = cv2.imread('./test images/peppers_gray.tif', 0)
@@ -135,7 +137,7 @@ if __name__ == "__main__":
     # perform averaging of pixels based on neighboring pixels
     n = 3   # the size of the sliding window with which to average, needs to be odd
     tmStart = time.time()
-    imgAveraged = neighborAverage(img, n)
+    imgAveraged = average(img, n)
     tmEnd = time.time()
     tmElapsed = round((tmEnd - tmStart) * 1000, 2)
     print('Averaging time elapsed = {} ms'.format(tmElapsed))

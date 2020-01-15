@@ -1,3 +1,4 @@
+# exec(open('0103_rotate.py').read())
 #TODO: see if opencv has a rotation function
 import subprocess as sp
 import numpy as np

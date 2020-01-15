@@ -1,3 +1,4 @@
+# exec(open('0101_quantization.py').read())
 #TODO: see if there is an opencv function for intensity quantization
 import subprocess as sp
 import numpy as np

@@ -1,3 +1,4 @@
+# exec(open('0201_jpeg.py').read())
 import subprocess as sp
 import numpy as np
 import cv2
@@ -13,13 +14,13 @@ sp.call('cls', shell=True)
 #
 # ---------------------------------------------------------------------
 def jpeg(img, div, fft = False, display8x8 = False):
-
-    # begin scanning
     stop = False
     display = False
     matSize = 8             # size of matrix blocks to perform dct
     imgCopy = img.copy()
     idm = classes.ImageDisplayManager()
+
+    # begin scanning
     for rowStart in range(0,512,matSize):
         for colStart in range(0,512,matSize):
             # take a matSize x matSize block

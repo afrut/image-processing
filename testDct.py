@@ -1,3 +1,4 @@
+# exec(open('testDct.py').read())
 # ---------------------------------------------------------------------
 #
 # Different ways to calculate the Discrete Cosine Transform of a Matrix

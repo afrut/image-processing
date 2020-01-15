@@ -1,3 +1,4 @@
+# exec(open('0102_averaging.py').read())
 #TODO: see if opencv has a blurring or averaging function
 import subprocess as sp
 import numpy as np
